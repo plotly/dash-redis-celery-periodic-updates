@@ -23,7 +23,7 @@ app.layout = html.Div([
         value='COKE'
     ),
     dcc.Graph(id='my-graph')
-])
+], className="container")
 
 @app.callback(Output('my-graph', 'figure'), [Input('my-dropdown', 'value')])
 def update_graph(selected_dropdown_value):
@@ -33,8 +33,20 @@ def update_graph(selected_dropdown_value):
     return {
         'data': [{
             'x': df.index,
-            'y': df.Close
-        }]
+            'y': df.Close,
+            'line': {
+                'width': 3,
+                'shape': 'spline'
+            }
+        }],
+        'layout': {
+            'margin': {
+                'l': 30,
+                'r': 20,
+                'b': 30,
+                't': 20
+            }
+        }
     }
 
 app.css.append_css({
