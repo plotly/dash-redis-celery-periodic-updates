@@ -5,6 +5,7 @@ import dash_html_components as html
 from pandas_datareader import data as web
 from datetime import datetime as dt
 import flask
+import time
 
 server = flask.Flask('app')
 
@@ -35,6 +36,13 @@ def update_graph(selected_dropdown_value):
             'y': df.Close
         }]
     }
+
+app.css.append_css({
+    'external_url': (
+        'https://codepen.io/chriddyp/pen/rwMZrP.css?timestamp=' + str(int(time.time())),
+    )
+})
+
 
 if __name__ == '__main__':
     app.run_server()
