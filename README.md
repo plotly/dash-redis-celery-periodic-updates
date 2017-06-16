@@ -1,2 +1,1 @@
-# dash-hello-world
-the simplest dash app
+Dash stock tickers demo app
