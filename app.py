@@ -6,8 +6,10 @@ from pandas_datareader import data as web
 from datetime import datetime as dt
 import flask
 import time
+import os
 
 server = flask.Flask('app')
+server.secret_key = os.environ.get('secret_key', 'secret')
 
 app = dash.Dash('app', server=server)
 
