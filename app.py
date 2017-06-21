@@ -56,7 +56,7 @@ def update_graph(selected_dropdown_value):
 
 app.css.append_css({
     'external_url': (
-	'https://cdn.rawgit.com/plotly/dash-app-stylesheets/3c63722ae6ee1e4ad31823a902f79d91644fa5c1/dash-hello-world.css'
+	'https://cdn.rawgit.com/plotly/dash-app-stylesheets/2d475c9029eb4abb74bd93fd6d659afc81019daf/dash-hello-world.css'
     )
 })
 
