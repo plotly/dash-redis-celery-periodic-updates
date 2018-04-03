@@ -5,6 +5,7 @@ import dash_html_components as html
 from pandas_datareader import data as web
 from datetime import datetime as dt
 import flask
+import redis
 import time
 import os
 
@@ -12,6 +13,12 @@ server = flask.Flask('app')
 server.secret_key = os.environ.get('secret_key', 'secret')
 
 app = dash.Dash('app', server=server)
+
+if 'DYNO' in os.environ:
+    if bool(os.getenv('DASH_PATH_ROUTING', 0)):
+        app.config.requests_pathname_prefix = '/{}/'.format(
+            os.environ['DASH_APP_NAME']
+        )
 
 app.scripts.config.serve_locally = False
 dcc._js_dist[0]['external_url'] = 'https://cdn.plot.ly/plotly-basic-latest.min.js'
