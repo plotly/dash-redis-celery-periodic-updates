@@ -21,7 +21,7 @@ ssh dokku@YOUR_DASH_SERVER redis:create SERVICE-NAME
 ssh dokku@YOUR_DASH_SERVER redis:link SERVICE-NAME APP-NAME
 ```
 
-Replace `YOUR_DASH_SERVER` with the name of your Dash server (same as when
-you run `git remove add`, `SERVICE-NAME` with the name you want for your
-Redis service, and `APP-NAME` with the name of your app (as specified in
-the Dash App Manager).
+In the commands above, replace:
+* `YOUR_DASH_SERVER` with the name of your Dash server (same as when you run `git remote add`)
+* `SERVICE-NAME` with the name you want for your Redis service
+* `APP-NAME` with the name of your app (as specified in the Dash App Manager).
