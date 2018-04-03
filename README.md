@@ -1,10 +1,27 @@
-**Dash Hello World**
+# Dash Redis Demo
 
-This app is a simple example of the capabilities of Dash developed by [Plotly](https://plot.ly/) and acts as an intro to overall Python framework. Further examples can be found at [dash/gallery/](plot.ly/dash/gallery).
+This app demonstrates how to connect to a [Redis](https://redis.io) database
+from [Dash](https://plot.ly/dash).
 
-Dash abstracts away all of the technologies and protocols required to build an interactive web-based application and is a simple and effective way to bind a user interface around your Python code.
+It works out of the box with the Redis server built in to
+[Dash On Premise](https://plot.ly/products/on-premise/) but could be adapted
+to work with other servers such as
+[Heroku Redis](https://elements.heroku.com/addons/heroku-redis) or your
+local Redis server.
 
-To learn more check out our [documentation](https://plot.ly/dash).
+For debugging convenince, we install the
+[redis-tools](https://packages.ubuntu.com/trusty/database/redis-tools)
+package, which offers the `redis-cli` command. This can be removed
+for faster app push times.
 
-The following are screenshots for the app in this repo:
-![Alt desc](https://github.com/plotly/dash-hello-world/raw/master/Screenshots/Dash-Hello-World-Photo.png)
+To create and link a Redis database in Dash On Premise:
+
+```
+ssh dokku@YOUR_DASH_SERVER redis:create SERVICE-NAME
+ssh dokku@YOUR_DASH_SERVER redis:link SERVICE-NAME APP-NAME
+```
+
+Replace `YOUR_DASH_SERVER` with the name of your Dash server (same as when
+you run `git remove add`, `SERVICE-NAME` with the name you want for your
+Redis service, and `APP-NAME` with the name of your app (as specified in
+the Dash App Manager).
