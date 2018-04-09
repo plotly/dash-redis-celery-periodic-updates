@@ -1,5 +1,5 @@
 import dash
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State, Event
 import dash_core_components as dcc
 import dash_html_components as html
 from datetime import datetime as dt
@@ -7,6 +7,7 @@ import flask
 import redis
 import time
 import os
+from tasks import hello
 
 server = flask.Flask('app')
 server.secret_key = os.environ.get('secret_key', 'secret')
@@ -26,8 +27,15 @@ dcc._js_dist[0]['external_url'] = 'https://cdn.plot.ly/plotly-basic-latest.min.j
 
 app.layout = html.Div([
     html.H1('Redis INFO'),
-    html.Div(children=html.Pre(str(r.info())))
+    html.Div(children=html.Pre(str(r.info()))),
+    html.Button(id='hello', type='submit', children='Run "Hello" task'),
+    html.Div(id='target'),
 ], className="container")
+
+@app.callback(Output('target', 'children'), [], [], [Event('hello', 'click')])
+def hello_callback():
+    print 'DEBUG: callback hit'
+    hello.delay()
 
 app.css.append_css({
     'external_url': (
