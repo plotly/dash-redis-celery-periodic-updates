@@ -25,3 +25,31 @@ In the commands above, replace:
 * `YOUR_DASH_SERVER` with the name of your Dash server (same as when you run `git remote add`)
 * `SERVICE-NAME` with the name you want for your Redis service
 * `APP-NAME` with the name of your app (as specified in the Dash App Manager).
+
+## Celery
+
+This app also includes the [Celery](http://docs.celeryproject.org/en/latest/getting-started/introduction.html)
+task queue and a sample task.
+
+Clicking the **Run "Hello" task** button runs the task asynchronously. The
+task sleeps for 10 seconds then writes the current date and time to a file.
+
+In order to run Celery tasks, a broker needs to be run. To do this, scale
+up your app's "worker" process after pushing it:
+
+```
+ssh dokku@YOUR_DASH_SERVER ps:scale APP-NAME worker=1
+```
+
+As above, replace `APP-NAME` with the name of your app.
+
+To verify that the broker is working correctly, check your app's logs after
+clicking the button a few times:
+
+```
+ssh dokku@YOUR_DASH_SERVER logs APP-NAME
+```
+
+Tasks should show up in the logs when they are submitted (in other words
+when "Hello" is clicked), and then the task should complete about 10 seconds
+later.
