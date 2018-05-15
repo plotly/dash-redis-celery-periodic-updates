@@ -14,6 +14,8 @@ For debugging convenince, we install the
 package, which offers the `redis-cli` command. This can be removed
 for faster app push times.
 
+To enable Redis in Dash On Premise navigate to the settings page of the Server Manager. Under **Special Options & Customizations** select **Enable Dash Customizations** and then select **Enable Redis Databases for Dash Apps**.
+
 To create and link a Redis database in Dash On Premise:
 
 ```
