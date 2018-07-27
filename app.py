@@ -1,53 +1,83 @@
 import dash
-from dash.dependencies import Input, Output, State, Event
+from dash.dependencies import Input, Output, State
 import dash_core_components as dcc
 import dash_html_components as html
 from datetime import datetime as dt
 import flask
+import json
 import redis
 import time
 import os
-from tasks import hello
+import pandas as pd
 
-server = flask.Flask('app')
-server.secret_key = os.environ.get('secret_key', 'secret')
+import tasks
 
-app = dash.Dash('app', server=server)
+app = dash.Dash("app")
+server = app.server
 
-if 'DYNO' in os.environ:
-    if bool(os.getenv('DASH_PATH_ROUTING', 0)):
-        app.config.requests_pathname_prefix = '/{}/'.format(
-            os.environ['DASH_APP_NAME']
-        )
+# initialize the data when the app starts
+tasks.update_data()
 
-r = redis.StrictRedis.from_url(os.environ['REDIS_URL'])
 
-app.scripts.config.serve_locally = False
-dcc._js_dist[0]['external_url'] = 'https://cdn.plot.ly/plotly-basic-latest.min.js'
+if "DYNO" in os.environ:
+    if bool(os.getenv("DASH_PATH_ROUTING", 0)):
+        app.config.requests_pathname_prefix = "/{}/".format(os.environ["DASH_APP_NAME"])
 
-app.layout = html.Div([
-    html.H1('Redis INFO'),
-    html.Div(children=html.Pre(str(r.info()))),
-    html.Button(id='hello', type='submit', children='Run "Hello" task'),
-    html.Div(id='target'),
-], className="container")
+redis_instance = redis.StrictRedis.from_url(os.environ["REDIS_URL"])
 
-@app.callback(Output('target', 'children'), [], [], [Event('hello', 'click')])
-def hello_callback():
-    print 'DEBUG: callback hit'
-    hello.delay()
 
-app.css.append_css({
-    'external_url': (
-	'https://cdn.rawgit.com/plotly/dash-app-stylesheets/96e31642502632e86727652cf0ed65160a57497f/dash-hello-world.css'
+def serve_layout():
+    return html.Div(
+        [
+            dcc.Interval(interval=5 * 1000, id="interval"),
+            html.H1("Redis, Celery, and Periodic Updates"),
+            html.Div(id="status"),
+            dcc.Dropdown(
+                id="dropdown",
+                options=[{"value": i, "label": i} for i in ["LA", "NYC", "MTL"]],
+                value="LA",
+            ),
+            dcc.Graph(id="graph"),
+        ]
     )
-})
-
-if 'DYNO' in os.environ:
-    app.scripts.append_script({
-        'external_url': 'https://cdn.rawgit.com/chriddyp/ca0d8f02a1659981a0ea7f013a378bbd/raw/e79f3f789517deec58f41251f7dbb6bee72c44ab/plotly_ga.js'
-    })
 
 
-if __name__ == '__main__':
-    app.run_server()
+app.layout = serve_layout
+
+
+def get_dataframe():
+    """Retrieve the dataframe from Redis
+    This dataframe is periodically updated through the redis task
+    """
+    jsonified_df = redis_instance.hget(
+        tasks.REDIS_HASH_NAME, tasks.REDIS_KEYS["DATASET"]
+    ).decode("utf-8")
+    df = pd.DataFrame(json.loads(jsonified_df))
+    return df
+
+
+@app.callback(
+    Output("graph", "figure"),
+    [Input("dropdown", "value"), Input("interval", "n_intervals")],
+)
+def update_graph(value, _):
+    df = get_dataframe()
+    return {
+        "data": [{"x": df["time"], "y": df["value"], "type": "bar"}],
+        "layout": {"title": value},
+    }
+
+
+@app.callback(
+    Output("status", "children"),
+    [Input("dropdown", "value"), Input("interval", "n_intervals")],
+)
+def update_status(value, _):
+    data_last_updated = redis_instance.hget(
+        tasks.REDIS_HASH_NAME, tasks.REDIS_KEYS["DATE_UPDATED"]
+    ).decode("utf-8")
+    return "Data last updated at {}".format(data_last_updated)
+
+
+if __name__ == "__main__":
+    app.run_server(debug=True)
