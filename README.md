@@ -26,7 +26,7 @@ To enable Redis in Dash On Premise navigate to the settings page of the Server M
 
 This app also includes the Celery task queue and a sample periodic update task. (More information on Celery Periodic Tasks [here](http://docs.celeryproject.org/en/latest/userguide/periodic-tasks.html))
 
-In this sample app, the task `update_data` (in `tasks.py`) creates a dataframe with sample data, then saves it in redis so that the Dash app, running on a separate process (or a separate container), can have access to it, and read it.
+In this sample app, the task `update_data` (in `tasks.py`) creates a dataframe with sample data, then saves it in Redis so that the Dash app, running on a separate process (or a separate container), can have access to it, and read it.
 
 Using the function `setup_periodic_tasks` (also in `tasks.py`), we add the task above, `update_data`, to the list of periodic tasks, with an interval of 15, so this task runs every 15 seconds.
 
@@ -40,7 +40,9 @@ In order to do this, you need to run:
 `docker run --name local-redis -d redis`
 
 Then:
-`docker inspect local-redis | grep IPAddress` to get your redis instance's IP address
+`docker inspect local-redis | grep IPAddress` to get your Redis instance's IP address
+
+If you don't have docker, alternatively, see the Redis documentation: https://redis.io/documentation to download Redis and set up a local instance.
 
 The next commands need to be running from the root of your Dash App (Where the files `app.py` and `tasks.py` are)
 
@@ -77,7 +79,7 @@ ssh dokku@YOUR_DASH_SERVER redis:create SERVICE-NAME
 ssh dokku@YOUR_DASH_SERVER redis:link SERVICE-NAME APP-NAME
 ```
 
-If you want to link an existing redis instance/service, you can simply use the second command, using the SERVICE-NAME of the existing redis instance.
+If you want to link an existing Redis instance/service, you can simply use the second command, using the SERVICE-NAME of the existing Redis instance.
 
 In the commands above, replace:
 * `YOUR_DASH_SERVER` with the name of your Dash server (same as when you run `git remote add`)
