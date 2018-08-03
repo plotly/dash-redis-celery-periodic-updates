@@ -1,0 +1,3 @@
+[submodule "dash-deploy"]
+	path = dash-deploy
+	url = git@github.com:plotly/dash-deploy.git
