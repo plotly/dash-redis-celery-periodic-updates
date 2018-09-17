@@ -61,13 +61,12 @@ But please only do this in development, not in a production environment.
 
 ### On your On-Prem server
 
-In order to have this setup when deploying your dash app to your Plotly On-Prem server, your `Procfile` has to execute these three processes (`celery worker`, `celery beat` and the dash app)
+In order to have this setup when deploying your dash app to your Dash Deployment Server, your `Procfile` has to execute these three processes (`celery worker`, `celery beat` and the dash app)
 
-In order to run Celery tasks On your Plotly On-Prem server, worker has to be running and linked to your dash app. To do this, scale
-up your app's "worker" processes:
+In order to run Celery tasks On your Dash Deployment Server, your processes workers have to be running and linked to your dash app. To do this, scale up your app's workers processes (Using the names your have in your `Procfile`) - Note that this command is not necessary if you have a `DOKKU_SCALE` file that reflects how many workers are assigned to each process, like in this repository:
 
 ```
-ssh dokku@YOUR_DASH_SERVER ps:scale APP-NAME worker=1
+ssh dokku@YOUR_DASH_SERVER ps:scale APP-NAME worker-default=1 worker-beat=1
 ```
 
 Just like in the local setup, you need a Redis instance to be running and to be linked to your Dash App:
