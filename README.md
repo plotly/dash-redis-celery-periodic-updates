@@ -34,7 +34,7 @@ Using the function `setup_periodic_tasks` (also in `tasks.py`), we add the task 
 
 In order to do this, you need to run:
 
-### Locally:
+### Locally (Linux/Ubuntu):
 
 * A Redis instance, a simple way to do this, if you have docker locally, is to run a Redis container:
 `docker run --name local-redis -d redis`
@@ -58,6 +58,43 @@ But please only do this in development, not in a production environment.
 
 * The dash app:
 `REDIS_URL=redis://<your-redis-instance-ip>:6379 python app.py`
+
+### Locally (Windows):
+Redis is not optimized to work with Windows, but it is possible to use it. 
+
+#### Running the Redis-Server
+1. Download the Redis MSI installer for Windows from https://github.com/MicrosoftArchive/redis/releases & run the MSI installer.
+
+2. Install Redis Python Client with `pip install redis`. 
+Note: Originally I had used version `2.10.6` which gave a lot of errors. Upgrading to version `3.2.1` fixed these issues. For more information about the Python client go here: https://redislabs.com/lp/python-redis/
+
+3. Open the cmd and go to the root directory of Redis. Run `redis-server` in cmd. If you get an error check the troubleshooting portion below.  
+
+#### Runing the Redis & Celery Instance
+**Note: Ensure you're running the below commands in a terminal such as Git Bash or Cygwin**
+* The Redis db (run in root of Redis folder or have in Windows ENV variables):
+`redis-server`
+
+* The scheduler:
+`REDIS_URL=redis://<your-redis-instance-ip>:6379 celery -A tasks beat --loglevel=DEBUG`
+
+* The worker that will actually run the tasks (ensure you have `gevent` -> `pip install gevent`):
+`REDIS_URL=redis://<your-redis-instance-ip>:6379 celery -A tasks worker --loglevel=DEBUG info -P gevent`
+
+* The dash app:
+`REDIS_URL=redis://<your-redis-instance-ip>:6379 python app.py`
+
+At the end of it you will have four terminals open in total.
+
+#### Troubleshooting (Windows)
+If you see the error: `Can't bind TCP listener *:6379 using Redis on Windows`
+Follow these steps: 
+1. `cd` to the bin directory of Redis, and run
+2. `redis-cli`
+3. `shutdown`
+4. `exit`
+5. open another cmd window, cd to the bin directory of Redis, and run in cmd `redis-server`
+More information on this error here: https://stackoverflow.com/questions/31769097/cant-bind-tcp-listener-6379-using-redis-on-windows
 
 ### On your On-Prem server
 
@@ -84,4 +121,3 @@ In the commands above, replace:
 * `YOUR_DASH_SERVER` with the name of your Dash server (same as when you run `git remote add`)
 * `SERVICE-NAME` with the name you want for your Redis service
 * `APP-NAME` with the name of your app (as specified in the Dash App Manager).
-
