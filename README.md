@@ -34,7 +34,7 @@ Using the function `setup_periodic_tasks` (also in `tasks.py`), we add the task 
 
 In order to do this, you need to run:
 
-### Locally (Linux/Ubuntu):
+### Locally (MacOS/Linux):
 
 * A Redis instance, a simple way to do this, if you have docker locally, is to run a Redis container:
 `docker run --name local-redis -d redis`
@@ -89,11 +89,11 @@ At the end of it you will have four terminals open in total.
 #### Troubleshooting (Windows)
 If you see the error: `Can't bind TCP listener *:6379 using Redis on Windows`
 Follow these steps: 
-1. `cd` to the bin directory of Redis, and run
+1. `cd` to the bin (Ex: `directory of Redis, and run
 2. `redis-cli`
 3. `shutdown`
 4. `exit`
-5. open another cmd window, cd to the bin directory of Redis, and run in cmd `redis-server`
+5. open another cmd window, cd to the root directory of your Redis installation, and run in cmd `redis-server`.
 More information on this error here: https://stackoverflow.com/questions/31769097/cant-bind-tcp-listener-6379-using-redis-on-windows
 
 ### On your On-Prem server
